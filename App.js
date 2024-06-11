@@ -1,18 +1,21 @@
+import { color } from "@rneui/base";
 import { StatusBar } from "expo-status-bar";
-import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import Row from "./components/Row";
-import Button from "./components/Button";
-import calculator, { initialState } from "./util/calculator";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useEffect, useState } from "react";
+import { Image, StyleSheet, Text, TextInput, View } from "react-native";
 
 export default function App() {
   const [monitor, setMonitor] = useState();
   const [bcv, setBcv] = useState();
-  const [initialStateCalc, setInitialStateCalc] = useState(initialState)
-  HandleTap = (type, value) => {
-    setInitialStateCalc((initialStateCalc) => calculator(type, value, initialStateCalc));
-  };
+  const [usd, setUsd] = useState(0);
+  const [bs, setBs] = useState(0);
+
+  useEffect(() => {
+    if (usd !== '') {
+      setBs((usd * bcv).toFixed(2)); // Ajusta esta lógica según tu necesidad
+    } else {
+      setBs(0);
+    }
+  }, [usd]);
   const getMonitorDolar = async () => {
     try {
       const response = await fetch(
@@ -46,156 +49,158 @@ export default function App() {
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "center",
-          paddingVertical: 20,
-          marginVertical: 32,
-          paddingHorizontal: 20,
+          paddingVertical: 25,
+          marginBottom: 32,
+          shadowColor: "black",
+          shadowOffset: {
+            width: 6,
+            height: 6,
+          },
+          shadowOpacity: 0.5,
+          shadowRadius: 4,
+          elevation: 16,
           backgroundColor: "black",
         }}
       >
         <Text
           style={{
             color: "white",
+            marginTop: 20,
             textAlign: "center",
-            fontSize: 30,
+            fontSize: 20,
             fontWeight: "bold",
           }}
         >
           Tasa Ven
         </Text>
       </View>
-      <View style={styles.container}>
-        <View style={styles.containerInfoTasa}>
-          <Text style={styles.StyledTextTitleInfoTasaMonitor}>
-            <Text
+      <View
+        style={{ display: "flex", flexDirection: "column", padding: 20, paddingHorizontal:30, }}
+      >
+        <View style={styles.container}>
+          <View style={styles.containerInfoTasa}>
+            <Image
               style={{
-                color: "#FFCC10",
+                width: 60,
+                height: 60,
+                margin: "auto",
               }}
-            >
-              Moni
-            </Text>
-            <Text
-              style={{
-                color: "#224A85",
+              source={{
+                uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQAuReGZsSqOOWn7V7hZEYwlwSs95XZU5wfvA&s",
               }}
-            >
-              tor
-            </Text>
-            <Text
-              style={{
-                color: "#224A85",
-              }}
-            >
-              D
+            />
+            <Text style={styles.StyledTextTitleInfoTasaMonitor}>
+              <Text
+                style={{
+                  color: "#FFCC10",
+                }}
+              >
+                Mon
+                <Text
+                style={{
+                  color: "#224A85",
+                }}
+              >
+               i
+              </Text>
+              </Text>
+              <Text
+                style={{
+                  color: "#224A85",
+                }}
+              >
+                tor
+              </Text>
               <Text
                 style={{
                   color: "#992D2A",
                 }}
               >
-                olar
+                USD
               </Text>
             </Text>
-          </Text>
-          <Text style={styles.StyledTextPrice}>{monitor}</Text>
+            <Text style={styles.StyledTextPrice}>{monitor}</Text>
+          </View>
+
+          <View style={styles.containerInfoTasa}>
+            <Image
+              style={{
+                width: 60,
+                height: 60,
+                margin: "auto",
+              }}
+              source={{
+                uri: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEghXp_oP8cy8F8IsqxiOWnlTY8PNpVBrwVEq8Uv31URazLZMF6oS5hrlTPBmjt_QjE743Aj8az0jQICXLhBA3mMLSrag7etE3bfYd1BQA-vWyIVopCy6Z085PMyLE4OK5C-qM8LiUfgj4I/s575/BCV1.png",
+              }}
+            />
+            <Text style={styles.StyledTextTitleInfoTasaBCV}>BCV USD</Text>
+            <Text style={styles.StyledTextPrice}>{bcv}</Text>
+          </View>
+          <StatusBar style="light" />
         </View>
+        <View style={{
+          display:'flex',
+          flexDirection: 'column',
+          marginTop: 40,
+          gap:20
+        }}>
+       
+          <View style={{position:'relative'}}>
+          <TextInput 
+          placeholder="Dólares"
+          selectionColor="black"
+          keyboardType="numeric" 
+          value={usd}
+          onChange={(value)=> { 
+            setUsd(Number(value.nativeEvent.text)) 
+            setBs(usd*bcv)
+          }}
+          maxLength={10}
+          style={{
+            padding:5,
+            paddingLeft: 40,
+            width:'70%',
+            borderRadius: 5,
+            height:50,
+            borderWidth: 1,
 
-        <View>
-          <Text style={styles.StyledTextTitleInfoTasaBCV}>BCV Dolar</Text>
-          <Text style={styles.StyledTextPrice}>{bcv}</Text>
+          }}>
+          
+          </TextInput>
+            <Image
+             source={require('./assets/coin.png')}
+             style={{position:'absolute', width:25, height:25, bottom:13, left: 5}}
+             ></Image>
+          </View>
+
+          <View style={{position:'relative'}}>
+          <TextInput 
+          placeholder="Bolívares"
+          selectionColor="black"
+          keyboardType="numeric"
+          value={bs}
+          onChange={(value)=> {
+            setbs(value.nativeEvent.text)
+          }}
+          maxLength={10}
+          style={{
+            padding:5,
+            width:'70%',
+            paddingLeft: 40,
+            borderRadius: 5,
+            height:50,
+            borderWidth: 1,
+
+          }}>
+
+          </TextInput>
+            <Image
+             source={require('./assets/bolivar.png')}
+             style={{position:'absolute', width:25, height:25, bottom:13, left: 5}}
+             ></Image>
+          </View>
+      
         </View>
-        <StatusBar style="auto" />
-      </View>
-
-      <View
-        style={{
-          margin:'auto',
-          marginTop: 60,
-          width: "90%",
-          padding: 2,
-          height: 60,
-          borderWidth: 1,
-          borderColor: "black",
-        }}
-      >
-        <SafeAreaView>
-        <View>
-        
-        <Text style={styles.value}>
-            {initialStateCalc.currentValue.toLocaleString()}
-          </Text>
-        </View>
-        <View style={{marginTop:50}}>
-          <Row>
-            
-          <Button
-              text="C"
-              theme="secondary"
-              onPress={() => HandleTap("clear")}
-            />
-
-            <Button
-              text="+/-"
-              theme="secondary"
-              onPress={() => HandleTap("posneg")}
-            />
-
-            <Button
-              text="%"
-              theme="secondary"
-              onPress={() => HandleTap("percentage")}
-            />
-
-            <Button
-              text="/"
-              theme="accent"
-              onPress={() => HandleTap("operator", "/")}
-            />
-          </Row>
-           {/* Number */}
-           <Row>
-            <Button text="7" onPress={() => HandleTap("number", 7)} />
-            <Button text="8" onPress={() => HandleTap("number", 8)} />
-            <Button text="9" onPress={() => HandleTap("number", 9)} />
-            <Button
-              text="X"
-              theme="accent"
-              onPress={() => HandleTap("operator", "*")}
-            />
-          </Row>
-
-          <Row>
-            <Button text="5" onPress={() => HandleTap("number", 5)} />
-            <Button text="6" onPress={() => HandleTap("number", 6)} />
-            <Button text="7" onPress={() => HandleTap("number", 7)} />
-            <Button
-              text="-"
-              theme="accent"
-              onPress={() => HandleTap("operator", "-")}
-            />
-          </Row>
-
-          <Row>
-            <Button text="1" onPress={() => HandleTap("number", 1)} />
-            <Button text="2" onPress={() => HandleTap("number", 2)} />
-            <Button text="3" onPress={() => HandleTap("number", 3)} />
-            <Button
-              text="+"
-              theme="accent"
-              onPress={() => HandleTap("operator", "+")}
-            />
-          </Row>
-
-          <Row>
-            <Button text="0" onPress={() => HandleTap("number", 0)} />
-            <Button text="." onPress={() => HandleTap("number", ".")} />
-            <Button
-              text="="
-              theme="primary"
-              onPress={() => HandleTap("equal", "=")}
-            />
-          </Row>
-        </View>
-        </SafeAreaView>
-
       </View>
     </>
   );
@@ -206,9 +211,8 @@ const styles = StyleSheet.create({
     display: "flex",
     width: "100%",
     marginTop: 10,
-    padding: "20px",
     alignItems: "flex-start",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
     flexDirection: "row",
   },
   containerInfoTasa: {
